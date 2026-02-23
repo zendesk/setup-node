@@ -90,20 +90,30 @@ steps:
 - run: npm test
 ```
 
-When using the `package.json` input, the action will look for `volta.node` first. If `volta.node` isn't defined, then it will look for `engines.node`.
+When using the `package.json` input, the action will look in the following fields for a specified Node version:
+1. It checks `volta.node` first.
+2. Then it checks `devEngines.runtime` for an entry with `"name": "node"`.
+3. Then it will look for `engines.node`.
+4. Otherwise it tries to resolve the file defined by [`volta.extends`](https://docs.volta.sh/advanced/workspaces)
+   and look for `volta.node`, `devEngines.runtime`, or `engines.node` recursively.
+
 
 ```json
 {
   "engines": {
-    "node": ">=16.0.0"
+    "node": "^22 || ^24"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^24.3"
+    }
   },
   "volta": {
-    "node": "16.0.0"
+    "node": "24.11.1"
   }
 }
 ```
-
-Otherwise, when [`volta.extends`](https://docs.volta.sh/advanced/workspaces) is defined, then it will resolve the corresponding file and look for `volta.node` or `engines.node` recursively.
 
 ## Architecture
 
